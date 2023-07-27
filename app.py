@@ -1,4 +1,5 @@
 # pip install pycryptodome
+# pip install PyPDF2
 from glob import glob
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
