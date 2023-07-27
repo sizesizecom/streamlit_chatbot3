@@ -21,7 +21,7 @@ COLLECTION_NAME = "my_collection_2"
 def init_page():
     st.set_page_config(
         page_title="Ask My PDF(s)",
-        page_icon="?"
+        page_icon="ğŸ¤—"
     )
     st.sidebar.title("Nav")
     st.session_state.costs = []
@@ -36,14 +36,14 @@ def select_model():
     else:
         st.session_state.model_name = "gpt-4"
     
-    # 300: –{•¶ˆÈŠO‚Ìw¦‚Ìƒg[ƒNƒ“” (ˆÈ‰º“¯‚¶)
+    # 300: æœ¬æ–‡ä»¥å¤–ã®æŒ‡ç¤ºã®ãƒˆãƒ¼ã‚¯ãƒ³æ•° (ä»¥ä¸‹åŒã˜)
     st.session_state.max_token = OpenAI.modelname_to_contextsize(st.session_state.model_name) - 300
     return ChatOpenAI(temperature=0, model_name=st.session_state.model_name)
 
 
 def get_pdf_text():
     uploaded_file = st.file_uploader(
-        label='Upload your PDF here?',
+        label='Upload your PDF hereğŸ˜‡',
         type='pdf'
     )
     if uploaded_file:
@@ -51,9 +51,9 @@ def get_pdf_text():
         text = '\n\n'.join([page.extract_text() for page in pdf_reader.pages])
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             model_name="text-embedding-ada-002",
-            # “KØ‚È chunk size ‚Í¿–â‘ÎÛ‚ÌPDF‚É‚æ‚Á‚Ä•Ï‚í‚é‚½‚ß’²®‚ª•K—v
-            # ‘å‚«‚­‚µ‚·‚¬‚é‚Æ¿–â‰ñ“š‚ÉFX‚È‰ÓŠ‚Ìî•ñ‚ğQÆ‚·‚é‚±‚Æ‚ª‚Å‚«‚È‚¢
-            # ‹t‚É¬‚³‚·‚¬‚é‚Æˆê‚Â‚Ìchunk‚É\•ª‚ÈƒTƒCƒY‚Ì•¶–¬‚ª“ü‚ç‚È‚¢
+            # é©åˆ‡ãª chunk size ã¯è³ªå•å¯¾è±¡ã®PDFã«ã‚ˆã£ã¦å¤‰ã‚ã‚‹ãŸã‚èª¿æ•´ãŒå¿…è¦
+            # å¤§ããã—ã™ãã‚‹ã¨è³ªå•å›ç­”æ™‚ã«è‰²ã€…ãªç®‡æ‰€ã®æƒ…å ±ã‚’å‚ç…§ã™ã‚‹ã“ã¨ãŒã§ããªã„
+            # é€†ã«å°ã•ã™ãã‚‹ã¨ä¸€ã¤ã®chunkã«ååˆ†ãªã‚µã‚¤ã‚ºã®æ–‡è„ˆãŒå…¥ã‚‰ãªã„
             chunk_size=500,
             chunk_overlap=0,
         )
@@ -65,13 +65,13 @@ def get_pdf_text():
 def load_qdrant():
     client = QdrantClient(path=QDRANT_PATH)
 
-    # ‚·‚×‚Ä‚ÌƒRƒŒƒNƒVƒ‡ƒ“–¼‚ğæ“¾
+    # ã™ã¹ã¦ã®ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³åã‚’å–å¾—
     collections = client.get_collections().collections
     collection_names = [collection.name for collection in collections]
 
-    # ƒRƒŒƒNƒVƒ‡ƒ“‚ª‘¶İ‚µ‚È‚¯‚ê‚Îì¬
+    # ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ãŒå­˜åœ¨ã—ãªã‘ã‚Œã°ä½œæˆ
     if COLLECTION_NAME not in collection_names:
-        # ƒRƒŒƒNƒVƒ‡ƒ“‚ª‘¶İ‚µ‚È‚¢ê‡AV‚µ‚­ì¬‚µ‚Ü‚·
+        # ã‚³ãƒ¬ã‚¯ã‚·ãƒ§ãƒ³ãŒå­˜åœ¨ã—ãªã„å ´åˆã€æ–°ã—ãä½œæˆã—ã¾ã™
         client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
@@ -89,8 +89,8 @@ def build_vector_store(pdf_text):
     qdrant = load_qdrant()
     qdrant.add_texts(pdf_text)
 
-    # ˆÈ‰º‚Ì‚æ‚¤‚É‚à‚Å‚«‚éB‚±‚Ìê‡‚Í–ˆ‰ñƒxƒNƒgƒ‹DB‚ª‰Šú‰»‚³‚ê‚é
-    # LangChain ‚Ì Document Loader ‚ğ—˜—p‚µ‚½ê‡‚Í `from_documents` ‚É‚·‚é
+    # ä»¥ä¸‹ã®ã‚ˆã†ã«ã‚‚ã§ãã‚‹ã€‚ã“ã®å ´åˆã¯æ¯å›ãƒ™ã‚¯ãƒˆãƒ«DBãŒåˆæœŸåŒ–ã•ã‚Œã‚‹
+    # LangChain ã® Document Loader ã‚’åˆ©ç”¨ã—ãŸå ´åˆã¯ `from_documents` ã«ã™ã‚‹
     # Qdrant.from_texts(
     #     pdf_text,
     #     OpenAIEmbeddings(),
@@ -102,9 +102,9 @@ def build_vector_store(pdf_text):
 def build_qa_model(llm):
     qdrant = load_qdrant()
     retriever = qdrant.as_retriever(
-        # "mmr",  "similarity_score_threshold" ‚È‚Ç‚à‚ ‚é
+        # "mmr",  "similarity_score_threshold" ãªã©ã‚‚ã‚ã‚‹
         search_type="similarity",
-        # •¶‘‚ğ‰½ŒÂæ“¾‚·‚é‚© (default: 4)
+        # æ–‡æ›¸ã‚’ä½•å€‹å–å¾—ã™ã‚‹ã‹ (default: 4)
         search_kwargs={"k":10}
     )
     return RetrievalQA.from_chain_type(
